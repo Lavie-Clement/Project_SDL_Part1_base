@@ -36,16 +36,13 @@ animal::animal(const std::string& file_path, SDL_Surface* window_surface_ptr)
     if(!this->window_surface_ptr_)
         throw std::runtime_error(std::string(SDL_GetError()));
     
-    this->rectangle = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED ,30,30 };
-    int IMG_Blit=SDL_BlitScaled(this->image_ptr_, NULL, this->window_surface_ptr_, &this->rectangle);
-    if (IMG_Blit!=0)
-        throw std::runtime_error("Blitzing error! "
-            "SDL_image Error: " +
-            std::string(SDL_GetError()));
+    this->rectangle = { 0, 0 ,30,30 };
+    if (SDL_BlitSurface(this->image_ptr_, NULL, this->window_surface_ptr_, &rectangle))
+        throw std::runtime_error("Could not apply texture.");
 }
 animal::~animal()
 {
-    delete& rectangle;
+ 
     SDL_FreeSurface(this->window_surface_ptr_);
     SDL_FreeSurface(this->image_ptr_);
 }
@@ -83,7 +80,8 @@ application::application(unsigned n_sheep, unsigned n_wolf)
         throw std::runtime_error(std::string(SDL_GetError()));
     }
     sol = ground(window_surface_ptr_);
-    //gnogno=animal("sheep.png", this->window_surface_ptr_);
+    gnogno=animal("sheep.png", this->window_surface_ptr_);
+    std::cout << "image" << "\n";
 }
 
 application::~application()
