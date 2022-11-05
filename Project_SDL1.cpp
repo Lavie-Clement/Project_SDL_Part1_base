@@ -22,9 +22,14 @@ void init() {
                              "SDL_image Error: " +
                              std::string(IMG_GetError()));
 }
+
 sheep::sheep(SDL_Surface* window_surface_ptr, int px, int py):animal("sheep.png", window_surface_ptr,px,py)
 {
   
+}
+wolf::wolf(SDL_Surface* window_surface_ptr, int px, int py) : animal("wolf.png", window_surface_ptr, px, py)
+{
+
 }
 void animal::Deplacement(int pX,int pY)
 {
@@ -60,20 +65,24 @@ void animal::draw()
 ground::ground(SDL_Surface* window_surface_ptr)
 {
     this->window_surface_ptr_ = window_surface_ptr;
-    Uint32 color = SDL_MapRGB(this->window_surface_ptr_->format, 0, 255, 0);
+    this->color= SDL_MapRGB(this->window_surface_ptr_->format, 0, 255, 0);
     SDL_FillRect(window_surface_ptr_, NULL, color);
     this->rectangle = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,frame_width, frame_height };
     this->mout = sheep(this->window_surface_ptr_, 0, 100);
+    this->lou = wolf(this->window_surface_ptr_, 1000, 100);
 }
 ground::~ground()
 {
     
     
 }
+
 void ground::update()
 {
-    this->mout.Deplacement(5,5);
-    
+    SDL_FillRect(window_surface_ptr_, NULL,this->color);
+    this->mout.Deplacement(1,1);
+    this->lou.Deplacement(-1, 1);
+    this->lou.draw();
     
     this->mout.draw();
 }

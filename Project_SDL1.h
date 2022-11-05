@@ -63,8 +63,16 @@ public: // todo
   // Dtor
   // implement functions that are purely virtual in base class
 };
+class wolf : public animal {
+private:
+
+public: // todo
+    wolf(SDL_Surface* window_surface_ptr, int px, int py);// Ctor
+    wolf() {}
+};
 
 // Insert here:
+// 
 // class wolf, derived from animal
 // Use only sheep at first. Once the application works
 // for sheep you can add the wolves
@@ -77,6 +85,8 @@ private:
   SDL_Surface* window_surface_ptr_;
   SDL_Rect rectangle;
   sheep mout;
+  wolf lou;
+  Uint32 color;
   // Some attribute to store all the wolves and sheep
   // here
 
