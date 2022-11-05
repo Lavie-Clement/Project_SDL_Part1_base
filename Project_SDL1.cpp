@@ -22,13 +22,20 @@ void init() {
                              "SDL_image Error: " +
                              std::string(IMG_GetError()));
 }
-sheep::sheep(const std::string& file_path, SDL_Surface* window_surface_ptr, int px, int py):animal(file_path,window_surface_ptr)
+sheep::sheep(SDL_Surface* window_surface_ptr, int px, int py):animal("sheep.png", window_surface_ptr,px,py)
+{
+  
+}
+void animal::Deplacement(int pX,int pY)
+{
+    this->x += pX;
+    this->y += pY;
+}
+
+animal::animal(const std::string& file_path, SDL_Surface* window_surface_ptr,int px,int py)
 {
     this->x = px;
     this->y = py;
-}
-animal::animal(const std::string& file_path, SDL_Surface* window_surface_ptr)
-{
     this->image_ptr_ = IMG_Load(file_path.c_str());
     if (!this->image_ptr_)
         throw std::runtime_error("Could not load image");
@@ -36,18 +43,18 @@ animal::animal(const std::string& file_path, SDL_Surface* window_surface_ptr)
     if(!this->window_surface_ptr_)
         throw std::runtime_error(std::string(SDL_GetError()));
     
-    this->rectangle = { 0, 0 ,30,30 };
-    if (SDL_BlitSurface(this->image_ptr_, NULL, this->window_surface_ptr_, &rectangle))
-        throw std::runtime_error("Could not apply texture.");
+    this->rectangle = { x, y ,30,30 };
+
 }
 animal::~animal()
 {
- 
-    SDL_FreeSurface(this->window_surface_ptr_);
-    SDL_FreeSurface(this->image_ptr_);
+    //SDL_FreeSurface(this->image_ptr_);
+    
+   
 }
 void animal::draw()
 {
+    this->rectangle = { x, y ,30,30 };
     SDL_BlitScaled(this->image_ptr_, NULL, this->window_surface_ptr_, &this->rectangle);
 }
 ground::ground(SDL_Surface* window_surface_ptr)
@@ -56,14 +63,19 @@ ground::ground(SDL_Surface* window_surface_ptr)
     Uint32 color = SDL_MapRGB(this->window_surface_ptr_->format, 0, 255, 0);
     SDL_FillRect(window_surface_ptr_, NULL, color);
     this->rectangle = { SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,frame_width, frame_height };
+    this->mout = sheep(this->window_surface_ptr_, 0, 100);
 }
 ground::~ground()
 {
-    SDL_FreeSurface(window_surface_ptr_);
+    
+    
 }
 void ground::update()
 {
-    ;
+    this->mout.Deplacement(5,5);
+    
+    
+    this->mout.draw();
 }
 ground::ground()
 {
@@ -80,8 +92,8 @@ application::application(unsigned n_sheep, unsigned n_wolf)
         throw std::runtime_error(std::string(SDL_GetError()));
     }
     sol = ground(window_surface_ptr_);
-    gnogno=animal("sheep.png", this->window_surface_ptr_);
-    std::cout << "image" << "\n";
+    
+   
 }
 
 application::~application()
@@ -111,6 +123,9 @@ int application::loop(unsigned period)
                 break;
             }
         }
+        sol.update();
+
+        SDL_UpdateWindowSurface(window_ptr_);
     }
     return 0;
 }

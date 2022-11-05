@@ -31,9 +31,13 @@ private:
                            // load_surface_for
   // todo: Attribute(s) to define its position
   SDL_Rect rectangle;
+  int x;
+  int y;
+  int speed = 1;
 public:
   animal() {};
-  animal(const std::string& file_path, SDL_Surface* window_surface_ptr);
+  animal(const std::string& file_path, SDL_Surface* window_surface_ptr,int px,int py);
+  void Deplacement(int px,int pY);
   // todo: The constructor has to load the sdl_surface that corresponds to the
   // texture
   ~animal(); // todo: Use the destructor to release memory and "clean up
@@ -51,10 +55,11 @@ public:
 // class sheep, derived from animal
 class sheep : public animal {
 private:
-    int x;
-    int y;
+
 public: // todo
-    sheep(const std::string& file_path, SDL_Surface* window_surface_ptr, int px, int py);// Ctor
+    sheep(SDL_Surface* window_surface_ptr, int px, int py);// Ctor
+    sheep() {}
+    
   // Dtor
   // implement functions that are purely virtual in base class
 };
@@ -71,6 +76,7 @@ private:
   // Attention, NON-OWNING ptr, again to the screen
   SDL_Surface* window_surface_ptr_;
   SDL_Rect rectangle;
+  sheep mout;
   // Some attribute to store all the wolves and sheep
   // here
 
@@ -90,8 +96,7 @@ private:
   SDL_Window* window_ptr_;
   SDL_Surface* window_surface_ptr_;
   SDL_Event window_event_;
-  animal gnogno;
-  std::vector<animal*> animalList;
+  
   // Other attributes here, for example an instance of ground
   ground sol;
 public:
