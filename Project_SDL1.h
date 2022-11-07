@@ -32,11 +32,12 @@ private:
     SDL_Rect rectangle_;
     int positionX_;
     int positionY_;
-    int speed_ = 1;
+    int speed_;
     std::string image_;
     int directionX_;
     int directionY_;
-    bool Baby=false;
+    bool vivant_;
+
     // todo: Attribute(s) to define its position
 
 public:
@@ -53,12 +54,13 @@ public:
     void setDirectionY(int directionY);
     int getDirectionX();
     int getDirectionY();
+    SDL_Rect getRectangle();
+    void setVivant(bool vivant);
+    bool getVivant();
+
     void setSpeed(int speed);
     int getSpeed();
-    bool HasBaby();
-    void changeBaby();
-    void BabyFalse();
-    SDL_Rect getRect();
+
 
     virtual ~animal(); // todo: Use the destructor to release memory and "clean up
                // behind you"
@@ -67,18 +69,62 @@ public:
                  // Note that this function is not virtual, it does not depend
                  // on the static type of the instance
 
-    virtual void move() {};
-    virtual int getCdCop() { return -1; };
-    virtual void copBaisse(int n){};
-    virtual void augmentCd(int n){};// todo: Animals move around, but in a different
+    virtual void move() {}; // todo: Animals move around, but in a different
                              // fashion depending on which type of animal
+    virtual void setFood(int food) { };
+    virtual int getFood() { return 0; };
+    virtual int getCdCop() { return -1; };
+    virtual bool HasBaby() { return false; };
+    virtual void changeBaby() {};
+    virtual void BabyFalse() {};
+    virtual void copBaisse(int n) {};
+    virtual void augmentCd(int n) {};
 };
+class Humain
+{
+private:
+    SDL_Surface* window_surface_ptr_; // ptr to the surface on which we want the
+                                // animal to be drawn, also non-owning
+    SDL_Surface* image_ptr_; // The texture of the sheep (the loaded image), use
+                           // load_surface_for
+    SDL_Rect rectangle_;
+    int positionX_;
+    int positionY_;
+    int speed_ = 1;
+    std::string image_;
+    int directionX_;
+    int directionY_;
+    SDL_Event touche;
+    int speed;
 
+public:
+    Humain(){};
+    ~Humain() {};
+    Humain(SDL_Surface* window_surface_ptr, int positionX, int positionY);
+    void move();
+    void draw();
+    int getPosX();
+    int getPosY();
+    std::string getImage();
+    void setImage(std::string image);
+    void setDirectionX(int directionX);
+    void setDirectionY(int directionY);
+    int getDirectionX();  
+    int getDirectionY();
+    void setSpeed(int speed);
+    int getSpeed();
+    SDL_Rect getRectangle();
+    
+    
+
+};
 // Insert here:
 // class sheep, derived from animal
 class sheep : public animal {
 private:
-    int cdCop ;
+    int cdCop;
+    bool Baby;
+
 public:
     // todo                                                                             
     // Ctor
@@ -91,6 +137,9 @@ public:
     int getCdCop();
     void copBaisse(int n);
     void augmentCd(int n);
+    bool HasBaby();
+    void changeBaby();
+    void BabyFalse();
 };
 
 
@@ -98,14 +147,25 @@ public:
 // class wolf, derived from animal
 class wolf : public animal {
 private:
-
+    int food_;
 public: // todo
     wolf(SDL_Surface* window_surface_ptr, int positionX, int positionY);// Ctor
     wolf() {}
     ~wolf();
     void move();
+    void setFood(int food);
+    int getFood();
 };
-
+//class dog : public animal {
+//private:
+//    int food_;
+//public: // todo
+//    dog(SDL_Surface* window_surface_ptr, int positionX, int positionY);// Ctor
+//    dog() {}
+//    ~dog();
+//    void move();
+//    
+//};
 
 // Use only sheep at first. Once the application works
 // for sheep you can add the wolves
@@ -117,6 +177,7 @@ private:
     // Attention, NON-OWNING ptr, again to the screen
     SDL_Surface* window_surface_ptr_;
     SDL_Rect rectangle;
+    Humain player;
     /*sheep mout;
     wolf lou;*/
     std::vector<std::shared_ptr<animal>> animalList;
