@@ -25,29 +25,52 @@ void init();
 
 class animal {
 private:
-  SDL_Surface* window_surface_ptr_; // ptr to the surface on which we want the
+    SDL_Surface* window_surface_ptr_; // ptr to the surface on which we want the
                                     // animal to be drawn, also non-owning
-  SDL_Surface* image_ptr_; // The texture of the sheep (the loaded image), use
+    SDL_Surface* image_ptr_; // The texture of the sheep (the loaded image), use
                            // load_surface_for
-  // todo: Attribute(s) to define its position
-  SDL_Rect rectangle;
-  int x;
-  int y;
-  int speed = 1;
+    SDL_Rect rectangle_;
+    int positionX_;
+    int positionY_;
+    int speed_ = 1;
+    std::string image_;
+    int directionX_;
+    int directionY_;
+    bool Baby=false;
+    // todo: Attribute(s) to define its position
+
 public:
-  animal() {};
-  animal(const std::string& file_path, SDL_Surface* window_surface_ptr,int px,int py);
-  void Deplacement(int px,int pY);
-  // todo: The constructor has to load the sdl_surface that corresponds to the
-  // texture
-  ~animal(); // todo: Use the destructor to release memory and "clean up
+    animal() {};
+    animal(const std::string& file_path, SDL_Surface* window_surface_ptr, int positionX, int positionY);
+    // todo: The constructor has to load the sdl_surface that corresponds to the
+    // texture
+    void Deplacement(int px, int pY);
+    int getPosX();
+    int getPosY();
+    std::string getImage();
+    void setImage(std::string image);
+    void setDirectionX(int directionX);
+    void setDirectionY(int directionY);
+    int getDirectionX();
+    int getDirectionY();
+    void setSpeed(int speed);
+    int getSpeed();
+    bool HasBaby();
+    void changeBaby();
+    void BabyFalse();
+    SDL_Rect getRect();
+
+    virtual ~animal(); // todo: Use the destructor to release memory and "clean up
                // behind you"
 
-  void draw(); // todo: Draw the animal on the screen <-> window_surface_ptr.
+    void draw(); // todo: Draw the animal on the screen <-> window_surface_ptr.
                  // Note that this function is not virtual, it does not depend
                  // on the static type of the instance
 
-  //virtual void move() {}; // todo: Animals move around, but in a different
+    virtual void move() {};
+    virtual int getCdCop() { return -1; };
+    virtual void copBaisse(int n){};
+    virtual void augmentCd(int n){};// todo: Animals move around, but in a different
                              // fashion depending on which type of animal
 };
 
@@ -55,25 +78,35 @@ public:
 // class sheep, derived from animal
 class sheep : public animal {
 private:
-
-public: // todo
-    sheep(SDL_Surface* window_surface_ptr, int px, int py);// Ctor
-    sheep() {}
-    
-  // Dtor
-  // implement functions that are purely virtual in base class
+    int cdCop ;
+public:
+    // todo                                                                             
+    // Ctor
+    // Dtor
+    // implement functions that are purely virtual in base class
+    sheep() {};
+    sheep(SDL_Surface* window_surface_ptr, int positionX, int positionY);
+    ~sheep();
+    void move();
+    int getCdCop();
+    void copBaisse(int n);
+    void augmentCd(int n);
 };
+
+
+// Insert here:
+// class wolf, derived from animal
 class wolf : public animal {
 private:
 
 public: // todo
-    wolf(SDL_Surface* window_surface_ptr, int px, int py);// Ctor
+    wolf(SDL_Surface* window_surface_ptr, int positionX, int positionY);// Ctor
     wolf() {}
+    ~wolf();
+    void move();
 };
 
-// Insert here:
-// 
-// class wolf, derived from animal
+
 // Use only sheep at first. Once the application works
 // for sheep you can add the wolves
 
@@ -81,39 +114,38 @@ public: // todo
 // in the zoo example).
 class ground {
 private:
-  // Attention, NON-OWNING ptr, again to the screen
-  SDL_Surface* window_surface_ptr_;
-  SDL_Rect rectangle;
-  sheep mout;
-  wolf lou;
-  Uint32 color;
-  // Some attribute to store all the wolves and sheep
-  // here
-
+    // Attention, NON-OWNING ptr, again to the screen
+    SDL_Surface* window_surface_ptr_;
+    SDL_Rect rectangle;
+    /*sheep mout;
+    wolf lou;*/
+    std::vector<std::shared_ptr<animal>> animalList;
+    Uint32 color;
 public:
-  ground(SDL_Surface* window_surface_ptr); // todo: Ctor
-  ground();
-  ~ground(); // todo: Dtor, again for clean up (if necessary)
-  //void add_animal(some argument here); // todo: Add an animal
-  void update(); // todo: "refresh the screen": Move animals and draw them
-  // Possibly other methods, depends on your implementation
+    ground() {};
+
+    ground(SDL_Surface* window_surface_ptr); // todo: Ctor
+    ~ground(); // todo: Dtor, again for clean up (if necessary)
+    void add_animal(std::shared_ptr<animal> newAnimal); // todo: Add an animal
+    void update(); // todo: "refresh the screen": Move animals and draw them
+    // Possibly other methods, depends on your implementation
 };
 
 // The application class, which is in charge of generating the window
 class application {
 private:
-  // The following are OWNING ptrs
-  SDL_Window* window_ptr_;
-  SDL_Surface* window_surface_ptr_;
-  SDL_Event window_event_;
-  
-  // Other attributes here, for example an instance of ground
-  ground sol;
-public:
-  application(unsigned n_sheep, unsigned n_wolf); // Ctor
-  ~application();                                 // dtor
+    // The following are OWNING ptrs
+    SDL_Window* window_ptr_;
+    SDL_Surface* window_surface_ptr_;
+    SDL_Event window_event_;
+    ground ground_;
+    // Other attributes here, for example an instance of ground
 
-  int loop(unsigned period); // main loop of the application.
+public:
+    application(unsigned n_sheep, unsigned n_wolf); // Ctor
+    ~application();                                 // dtor
+
+    int loop(unsigned period); // main loop of the application.
                              // this ensures that the screen is updated
                              // at the correct rate.
                              // See SDL_GetTicks() and SDL_Delay() to enforce a
