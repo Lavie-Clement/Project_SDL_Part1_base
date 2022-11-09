@@ -10,6 +10,7 @@
 #include <memory>
 #include <optional>
 #include <vector>
+#include <string>
 
 // Defintions
 constexpr double frame_rate = 60.0; // refresh rate
@@ -37,7 +38,7 @@ private:
     int directionX_;
     int directionY_;
     bool vivant_;
-
+    std::vector<std::string> flags_;
     // todo: Attribute(s) to define its position
 
 public:
@@ -57,7 +58,8 @@ public:
     SDL_Rect getRectangle();
     void setVivant(bool vivant);
     bool getVivant();
-
+    void addFlag(std::string flag);
+    bool hasFlag(std::string flag);
     void setSpeed(int speed);
     int getSpeed();
 
@@ -91,7 +93,7 @@ private:
     int positionX_;
     int positionY_;
     int speed_ = 1;
-    std::string image_;
+    
     int directionX_;
     int directionY_;
     SDL_Event touche;
@@ -105,7 +107,7 @@ public:
     void draw();
     int getPosX();
     int getPosY();
-    std::string getImage();
+   
     void setImage(std::string image);
     void setDirectionX(int directionX);
     void setDirectionY(int directionY);
@@ -114,6 +116,7 @@ public:
     void setSpeed(int speed);
     int getSpeed();
     SDL_Rect getRectangle();
+    void setevent(SDL_Event ev);
     
     
 
@@ -188,7 +191,8 @@ public:
     ground(SDL_Surface* window_surface_ptr); // todo: Ctor
     ~ground(); // todo: Dtor, again for clean up (if necessary)
     void add_animal(std::shared_ptr<animal> newAnimal); // todo: Add an animal
-    void update(); // todo: "refresh the screen": Move animals and draw them
+    void update(); 
+    void uptdatePlayer(SDL_Event ev);// todo: "refresh the screen": Move animals and draw them
     // Possibly other methods, depends on your implementation
 };
 
