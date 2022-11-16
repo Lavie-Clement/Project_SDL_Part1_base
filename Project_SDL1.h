@@ -10,7 +10,6 @@
 #include <memory>
 #include <optional>
 #include <vector>
-#include <string>
 
 // Defintions
 constexpr double frame_rate = 60.0; // refresh rate
@@ -39,6 +38,7 @@ private:
     int directionY_;
     bool vivant_;
     std::vector<std::string> flags_;
+
     // todo: Attribute(s) to define its position
 
 public:
@@ -49,8 +49,6 @@ public:
     void Deplacement(int px, int pY);
     int getPosX();
     int getPosY();
-    std::string getImage();
-    void setImage(std::string image);
     void setDirectionX(int directionX);
     void setDirectionY(int directionY);
     int getDirectionX();
@@ -58,11 +56,11 @@ public:
     SDL_Rect getRectangle();
     void setVivant(bool vivant);
     bool getVivant();
-    void addFlag(std::string flag);
-    bool hasFlag(std::string flag);
+
     void setSpeed(int speed);
     int getSpeed();
-
+    void addFlag(std::string flag);
+    bool hasFlag(std::string flag);
 
     virtual ~animal(); // todo: Use the destructor to release memory and "clean up
                // behind you"
@@ -81,46 +79,13 @@ public:
     virtual void BabyFalse() {};
     virtual void copBaisse(int n) {};
     virtual void augmentCd(int n) {};
+    virtual void setDestination(int destinationX, int destinationY) {};
+    virtual int getDestinationX() { return 0; };
+    virtual int getDestinationY() { return 0; };
+    virtual void setPeur(int peur) {};
+    virtual int getPeur() { return 1; };
 };
-class Humain
-{
-private:
-    SDL_Surface* window_surface_ptr_; // ptr to the surface on which we want the
-                                // animal to be drawn, also non-owning
-    SDL_Surface* image_ptr_; // The texture of the sheep (the loaded image), use
-                           // load_surface_for
-    SDL_Rect rectangle_;
-    int positionX_;
-    int positionY_;
-    int speed_ = 1;
-    
-    int directionX_;
-    int directionY_;
-    SDL_Event touche;
-    int speed;
 
-public:
-    Humain(){};
-    ~Humain() {};
-    Humain(SDL_Surface* window_surface_ptr, int positionX, int positionY);
-    void move();
-    void draw();
-    int getPosX();
-    int getPosY();
-   
-    void setImage(std::string image);
-    void setDirectionX(int directionX);
-    void setDirectionY(int directionY);
-    int getDirectionX();  
-    int getDirectionY();
-    void setSpeed(int speed);
-    int getSpeed();
-    SDL_Rect getRectangle();
-    void setevent(SDL_Event ev);
-    
-    
-
-};
 // Insert here:
 // class sheep, derived from animal
 class sheep : public animal {
@@ -143,6 +108,7 @@ public:
     bool HasBaby();
     void changeBaby();
     void BabyFalse();
+
 };
 
 
@@ -151,25 +117,67 @@ public:
 class wolf : public animal {
 private:
     int food_;
+    int peur_;
 public: // todo
     wolf(SDL_Surface* window_surface_ptr, int positionX, int positionY);// Ctor
-    wolf() {}
+    wolf() {};
     ~wolf();
     void move();
     void setFood(int food);
     int getFood();
+    void setPeur(int peur);
+    int getPeur();
 };
-//class dog : public animal {
-//private:
-//    int food_;
-//public: // todo
-//    dog(SDL_Surface* window_surface_ptr, int positionX, int positionY);// Ctor
-//    dog() {}
-//    ~dog();
-//    void move();
-//    
-//};
+class dog : public animal {
+private:
+    int destinationX;
+    int destinationY;
+public: // todo
+    dog(SDL_Surface* window_surface_ptr, int positionX, int positionY);// Ctor
+    dog() {};
+    ~dog();
+    void move();
+    void setDestination(int destinationX, int destinationY);
+    int getDestinationX();
+    int getDestinationY();
 
+
+};
+class Humain
+{
+private:
+    SDL_Surface* window_surface_ptr_; // ptr to the surface on which we want the
+    // animal to be drawn, also non-owning
+    SDL_Surface* image_ptr_; // The texture of the sheep (the loaded image), use
+    // load_surface_for
+    SDL_Rect rectangle_;
+    int positionX_;
+    int positionY_;
+    int directionX_;
+    int directionY_;
+    SDL_Event touche;
+    int speed_;
+
+public:
+    Humain() {};
+    ~Humain() {};
+    Humain(SDL_Surface* window_surface_ptr, int positionX, int positionY);
+    void move();
+    void draw();
+    int getPosX();
+    int getPosY();
+    void setDirectionX(int directionX);
+    void setDirectionY(int directionY);
+    int getDirectionX();
+    int getDirectionY();
+    void setSpeed(int speed);
+    int getSpeed();
+    SDL_Rect getRectangle();
+    void setevent(SDL_Event ev);
+
+
+
+};
 // Use only sheep at first. Once the application works
 // for sheep you can add the wolves
 
@@ -181,6 +189,7 @@ private:
     SDL_Surface* window_surface_ptr_;
     SDL_Rect rectangle;
     Humain player;
+
     /*sheep mout;
     wolf lou;*/
     std::vector<std::shared_ptr<animal>> animalList;
@@ -191,9 +200,10 @@ public:
     ground(SDL_Surface* window_surface_ptr); // todo: Ctor
     ~ground(); // todo: Dtor, again for clean up (if necessary)
     void add_animal(std::shared_ptr<animal> newAnimal); // todo: Add an animal
-    void update(); 
-    void uptdatePlayer(SDL_Event ev);// todo: "refresh the screen": Move animals and draw them
+    void update(); // todo: "refresh the screen": Move animals and draw them
     // Possibly other methods, depends on your implementation
+    void updatePlayer(SDL_Event ev);// todo: "refresh the screen": Move animals and draw them
+    void updateDogs(SDL_Event ev);
 };
 
 // The application class, which is in charge of generating the window
